@@ -1,4 +1,3 @@
-
 name: scan
 on:
   push:
@@ -21,19 +20,14 @@ jobs:
         sudo apt-get update
         sudo apt-get install trivy
 
-    - name: Pull api7 image
+    - name: Pull image
       run: |
         docker pull api7/api7-ee-3-gateway:3.8.5
 
-    - name: Scan api7 image
+    - name: Scan image
       run: |
         trivy image --severity HIGH,CRITICAL api7/api7-ee-3-gateway:3.8.5 --scanners vuln
 
-    - name: Pull debian image
+    - name: Scan image with ignore unfixed
       run: |
-        docker pull debian:stable-slim
-
-    - name: Scan debian image
-      run: |
-        trivy image --severity HIGH,CRITICAL debian:stable-slim --scanners vuln
-
+        trivy image --severity HIGH,CRITICAL api7/api7-ee-3-gateway:3.8.5 --scanners vuln --ignore-unfixed true
