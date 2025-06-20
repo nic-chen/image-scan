@@ -2,28 +2,31 @@ name: scan
 on:
   push:
     branches:
-    - main
+      - "*"
   pull_request:
+    branches:
+      - "*"
+
 jobs:
   build:
     name: Scan
     runs-on: ubuntu-24.04
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: 'docker.io/api7/api7-ee-3-gateway:3.8.5'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          # ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
+          scan-type: image
+          scanners: "vuln"
 
-    - name: install Trivy
-      run: |
-        sudo apt-get install -y wget apt-transport-https gnupg lsb-release
-        wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
-        echo "deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main" | sudo tee -a /etc/apt/sources.list.d/trivy.list
-        sudo apt-get update
-        sudo apt-get install trivy
-
-    - name: Pull image
-      run: |
-        docker pull api7/api7-ee-3-gateway:3.8.5
-
-    - name: Scan image
-      run: |
-        trivy image --severity HIGH,CRITICAL api7/api7-ee-3-gateway:3.8.5 --scanners vuln
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: 'trivy-results.sarif'
