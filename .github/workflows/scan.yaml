@@ -26,4 +26,4 @@ jobs:
 
     - name: Scan image
       run: |
-        trivy image --severity HIGH,CRITICAL api7/api7-ee-3-gateway:3.8.5
+        trivy image --severity HIGH,CRITICAL api7/api7-ee-3-gateway:3.8.5 --scanners vuln
