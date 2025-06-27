@@ -22,12 +22,12 @@ jobs:
 
     - name: Pull image
       run: |
-        docker pull api7/api7-ee-3-gateway:3.8.5
+        docker pull api7/api7-ee-3-gateway:3.8.6
 
     - name: Scan image
       run: |
-        trivy image --severity HIGH,CRITICAL api7/api7-ee-3-gateway:3.8.5 --scanners vuln
+        trivy image --severity HIGH,CRITICAL api7/api7-ee-3-gateway:3.8.6 --scanners vuln
 
     - name: Scan image with ignore unfixed
       run: |
-        trivy image --severity HIGH,CRITICAL api7/api7-ee-3-gateway:3.8.5 --scanners vuln --ignore-unfixed
+        trivy image --severity HIGH,CRITICAL api7/api7-ee-3-gateway:3.8.6 --scanners vuln --ignore-unfixed
